@@ -102,7 +102,7 @@ class GetStartedScreen extends StatelessWidget {
                       height: 20,
                     ),
                     VotersOutlinedButton(
-                      text: 'Log In',
+                      text: 'Log In as Admin',
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(

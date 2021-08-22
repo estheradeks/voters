@@ -7,7 +7,11 @@ class VotersTextField extends StatelessWidget {
   final String hintText;
   final String labelText;
   final TextInputType keyboardType;
+  final TextInputAction textInputAction;
   final bool obscureText;
+  final Function(String) onChanged;
+  final Function(String) validator;
+  final bool readOnly;
 
   const VotersTextField({
     Key key,
@@ -17,6 +21,10 @@ class VotersTextField extends StatelessWidget {
     @required this.labelText,
     this.keyboardType,
     this.obscureText = false,
+    this.readOnly = false,
+    this.onChanged,
+    this.textInputAction,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -29,7 +37,11 @@ class VotersTextField extends StatelessWidget {
             child: TextFormField(
               controller: controller,
               focusNode: focusNode,
+              onChanged: onChanged,
+              readOnly: readOnly,
+              textInputAction: textInputAction,
               keyboardType: keyboardType,
+              validator: validator,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),

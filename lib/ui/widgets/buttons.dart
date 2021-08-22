@@ -17,6 +17,8 @@ class VotersFilledButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
+        color: whiteColor,
+        borderRadius: BorderRadius.circular(10.0),
         boxShadow: [
           BoxShadow(
             color: primaryColor.withOpacity(0.15),
@@ -27,6 +29,7 @@ class VotersFilledButton extends StatelessWidget {
       ),
       child: FlatButton(
         color: primaryColor,
+        disabledColor: primaryColor.withOpacity(.6),
         height: 60,
         minWidth: double.infinity,
         shape: RoundedRectangleBorder(

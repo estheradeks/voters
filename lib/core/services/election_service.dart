@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
@@ -6,7 +7,8 @@ import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/io.dart';
 
 class ElectionService {
-  ElectionService() {
+  ElectionService(String kPrivateKey) {
+    this.privateKey = kPrivateKey;
     initialSetup();
   }
 
@@ -22,8 +24,11 @@ class ElectionService {
 
   /// This will construct [credentials] with the provided [privateKey]
   /// and load the Ethereum address in [myAdderess] specified by these credentials.
-  String privateKey =
-      'af06facb9d45d228c301a0d9bd286fdee2be38c3138f65e8f521c99ca12b1810';
+  // String privateKey =
+  //     '077f6e339718cc55ec567b24ec24d301992f6d09b1c91fdfa60f39a4f3eca0fc';
+
+  String privateKey;
+
   // credentials
   Credentials credentials;
   // my ethereum address
@@ -78,9 +83,11 @@ class ElectionService {
     abi = jsonEncode(jsonFile["abi"]);
     contractAddress =
         EthereumAddress.fromHex(jsonFile["networks"]["5777"]["address"]);
+    log('contract address is $contractAddress');
   }
 
   getCredentials() async {
+    log('private key is $privateKey');
     credentials = await web3client.credentialsFromPrivateKey(privateKey);
     myEthereumAddress = await credentials.extractAddress();
   }
@@ -136,7 +143,7 @@ class ElectionService {
       function: functionName,
       params: functionArgs,
     );
-
+    log('result from read contract => ${functionName.name} function  =>> is $queryResult');
     return queryResult;
   }
 
@@ -146,13 +153,17 @@ class ElectionService {
     ContractFunction functionName,
     List<dynamic> functionArgs,
   ) async {
-    await web3client.sendTransaction(
+    var result = await web3client.sendTransaction(
       credentials,
       Transaction.callContract(
         contract: deployedContract,
         function: functionName,
         parameters: functionArgs,
+        maxGas: 5,
+        gasPrice: EtherAmount.inWei(BigInt.from(5)),
       ),
     );
+
+    log('result from write contract => ${functionName.name} function  =>> is $result');
   }
 }

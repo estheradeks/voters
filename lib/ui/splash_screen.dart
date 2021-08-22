@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/auth/get_started_screen.dart';
 import 'package:voters/ui/auth/sign_up_screen.dart';
+import 'package:voters/ui/modules/admin/admin_bottom_nav/admin_bottom_nav.dart';
+import 'package:voters/ui/modules/voter/voter_bottom_nav/voter_bottom_nav.dart';
 import 'package:voters/utils/theme.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -18,16 +21,26 @@ class _SplashScreenState extends State<SplashScreen> {
     _loadSplash();
   }
 
-  void _loadSplash() {
+  void _loadSplash() async {
     final duration = Duration(seconds: 2);
 
     Timer(
       duration,
-      () {
+      () async {
+        StorageService storageService = StorageService();
+        String address = await storageService.getAddress();
+        String privateKey = await storageService.getPrivateKey();
+        String role = await storageService.getRole();
+        bool isAdmin = role == 'admin';
+        bool isLoggedIn = address != null && privateKey != null;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => GetStartedScreen(),
+            builder: (_) => isLoggedIn
+                ? isAdmin
+                    ? AdminBottomNav()
+                    : VoterBottomNav()
+                : GetStartedScreen(),
           ),
         );
       },
