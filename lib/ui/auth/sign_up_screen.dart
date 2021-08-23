@@ -199,7 +199,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     electionService = ElectionService(_ethPrivateKey);
 
-                    await Future.delayed(Duration(seconds: 3));
+                    await Future.delayed(Duration(seconds: 6));
 
                     var result = await electionService.writeContract(
                       electionService.registerAsVoter,
@@ -207,6 +207,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         firstName + ' ' + lastName,
                         _phoneNumber,
                       ],
+                    );
+
+                    DocumentSnapshot ds = await ff
+                        .collection('voters_addresses')
+                        .doc('addresses')
+                        .get();
+
+                    List dataArray = ds.data()['data'];
+                    dataArray = dataArray..add(_ethAddress);
+
+                    ff.collection('voters_addresses').doc('addresses').update(
+                      {
+                        'data': [
+                          ...dataArray,
+                        ],
+                      },
                     );
 
                     if (result != null) {

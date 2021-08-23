@@ -66,7 +66,7 @@ class GetStartedScreen extends StatelessWidget {
                   children: [
                     VotersFilledButton(
                       text: 'Create a voter account',
-                      onPressed: () => Navigator.push(
+                      onPressed: () => Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (_) => SignUpScreen(),
@@ -103,7 +103,7 @@ class GetStartedScreen extends StatelessWidget {
                     ),
                     VotersOutlinedButton(
                       text: 'Log In as Admin',
-                      onPressed: () => Navigator.push(
+                      onPressed: () => Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (_) => SignInScreen(),

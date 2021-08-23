@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:voters/core/constants.dart';
 import 'package:voters/core/models/candidate.dart';
@@ -198,7 +200,10 @@ class CandidateDetailsBottomSheet extends StatelessWidget {
 
                 showLoadingDialog(context);
 
-                bool hasVoted = await storageService.getVoteStatus() ?? false;
+                bool hasVoted = await storageService.getVoteStatus();
+
+                log('candidate id is ${candidate.candidateId}');
+                log('candidate id is ${BigInt.from(candidate.candidateId)}');
                 if (!hasVoted) {
                   var result = await electionService.writeContract(
                     electionService.vote,

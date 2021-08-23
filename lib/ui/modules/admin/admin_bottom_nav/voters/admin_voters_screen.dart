@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:voters/core/constants.dart';
 import 'package:voters/core/models/voter.dart';
@@ -54,12 +55,24 @@ class _AdminVotersScreenState extends State<AdminVotersScreen> {
     _noOfVoters = int.parse(resultList.first.toString());
     log('get total votes $_noOfVoters');
 
+    // get the voters addresses from Firebase
+    List _votersAddresses = [];
+
+    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+        .collection('voters_addresses')
+        .doc('addresses')
+        .get();
+
+    _votersAddresses = documentSnapshot.data()['data'];
+
+    log('voters addresses are $_votersAddresses');
+
     for (int i = 0; i < _noOfVoters; i++) {
       var result = await electionService.readContract(
         electionService.voterDetails,
         [
           // GET VOTER DETAILS BASED ON THEIR ADDRESSES
-          EthereumAddress.fromHex(_address),
+          EthereumAddress.fromHex(_votersAddresses[i]),
         ],
       );
       _votersLists.add(
@@ -225,7 +238,8 @@ class _AdminVotersScreenState extends State<AdminVotersScreen> {
                                                   [
                                                     true,
                                                     EthereumAddress.fromHex(
-                                                      _address,
+                                                      _votersLists[index]
+                                                          .voterAddress,
                                                     ),
                                                   ],
                                                 );

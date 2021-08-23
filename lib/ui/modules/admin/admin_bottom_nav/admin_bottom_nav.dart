@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:voters/core/constants.dart';
 import 'package:voters/ui/modules/admin/admin_bottom_nav/elections/admin_elections_screen.dart';
 import 'package:voters/ui/modules/admin/admin_bottom_nav/elections/create_election_screen.dart';
 import 'package:voters/ui/modules/admin/admin_bottom_nav/profile/admin_profile_screen.dart';
 import 'package:voters/ui/modules/admin/admin_bottom_nav/voters/admin_voters_screen.dart';
 import 'package:voters/ui/results/election_results_screen.dart';
+import 'package:voters/ui/widgets/dialogs.dart';
 
 class AdminBottomNav extends StatefulWidget {
   @override
@@ -13,7 +15,7 @@ class AdminBottomNav extends StatefulWidget {
 
 class _AdminBottomNavState extends State<AdminBottomNav> {
   PageController _pageController;
-  bool _showElectionFab = false;
+  bool _showElectionFab = true;
 
   final _bodyWidgets = [
     AdminElectionsScreen(),
@@ -45,20 +47,32 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
             ? _showElectionFab
                 ? FloatingActionButton.extended(
                     onPressed: () async {
-                      var result = await showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        isDismissible: false,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(20.0),
-                            topLeft: Radius.circular(20.0),
-                          ),
-                        ),
-                        builder: (context) {
-                          return CreateElectionScreen();
-                        },
+                      showLoadingDialog(context);
+                      var resultList = await electionService.readContract(
+                        electionService.getStart,
+                        [],
                       );
+                      Navigator.pop(context);
+
+                      if (resultList.first) {
+                        showErrorDialog(
+                            context, 'An election has already started');
+                      } else {
+                        var result = await showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          isDismissible: false,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(20.0),
+                              topLeft: Radius.circular(20.0),
+                            ),
+                          ),
+                          builder: (context) {
+                            return CreateElectionScreen();
+                          },
+                        );
+                      }
                     },
                     label: Text(
                       'Create Election',
