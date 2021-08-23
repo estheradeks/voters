@@ -58,6 +58,7 @@ class _AdminVotersScreenState extends State<AdminVotersScreen> {
       var result = await electionService.readContract(
         electionService.voterDetails,
         [
+          // GET VOTER DETAILS BASED ON THEIR ADDRESSES
           EthereumAddress.fromHex(_address),
         ],
       );
@@ -172,7 +173,7 @@ class _AdminVotersScreenState extends State<AdminVotersScreen> {
                 ),
               if (_hasElectionStarted || _hasElectionEnded)
                 ...List.generate(
-                  1,
+                  _votersLists.length,
                   (index) => Column(
                     children: [
                       VotersCard(

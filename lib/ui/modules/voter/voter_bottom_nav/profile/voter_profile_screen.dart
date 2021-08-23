@@ -10,6 +10,9 @@ class VoterProfileScreen extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.all(20.0),
       children: [
+        SizedBox(
+          height: 20,
+        ),
         Container(
           height: 120,
           width: 120,
@@ -19,13 +22,13 @@ class VoterProfileScreen extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 10,
+          height: 20,
         ),
         VotersTextField(
           hintText: 'First Name',
           labelText: 'First Name',
           controller: TextEditingController(
-            text: 'Esther',
+            text: 'John',
           ),
         ),
         SizedBox(
@@ -35,7 +38,7 @@ class VoterProfileScreen extends StatelessWidget {
           hintText: 'Last Name',
           labelText: 'Last Name',
           controller: TextEditingController(
-            text: 'Adekunle',
+            text: 'Doe',
           ),
         ),
         SizedBox(
@@ -45,7 +48,7 @@ class VoterProfileScreen extends StatelessWidget {
           hintText: 'Email',
           labelText: 'Email',
           controller: TextEditingController(
-            text: 'estheradekunle@gmail.com',
+            text: 'johnn@doe.com',
           ),
         ),
         SizedBox(
@@ -55,13 +58,13 @@ class VoterProfileScreen extends StatelessWidget {
           hintText: 'Phone Number',
           labelText: 'Phone Number',
           controller: TextEditingController(
-            text: '08143037721',
+            text: '081232728822',
           ),
         ),
         SizedBox(
           height: 15,
         ),
-          VotersTextField(
+        VotersTextField(
           hintText: 'Gender',
           labelText: 'Gender',
           controller: TextEditingController(
@@ -71,7 +74,7 @@ class VoterProfileScreen extends StatelessWidget {
         SizedBox(
           height: 15,
         ),
-          VotersTextField(
+        VotersTextField(
           hintText: 'Date of Birth',
           labelText: 'Date of Birth',
           controller: TextEditingController(
@@ -81,7 +84,7 @@ class VoterProfileScreen extends StatelessWidget {
         SizedBox(
           height: 15,
         ),
-          VotersTextField(
+        VotersTextField(
           hintText: 'State',
           labelText: 'State',
           controller: TextEditingController(

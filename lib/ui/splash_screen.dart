@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -35,8 +36,11 @@ class _SplashScreenState extends State<SplashScreen> {
         String role = await storageService.getRole();
         bool isAdmin = role == 'admin';
         bool isLoggedIn = address != null && privateKey != null;
+        log('splash screen private key is $privateKey');
         if (isLoggedIn) {
           electionService = ElectionService(privateKey);
+
+          await Future.delayed(Duration(seconds: 3));
         }
         Navigator.pushReplacement(
           context,

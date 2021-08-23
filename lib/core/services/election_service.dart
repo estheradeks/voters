@@ -85,13 +85,15 @@ class ElectionService {
     abi = jsonEncode(jsonFile["abi"]);
     contractAddress =
         EthereumAddress.fromHex(jsonFile["networks"]["5777"]["address"]);
-    log('contract address is $contractAddress');
+    log('contract address is election service $contractAddress');
   }
 
   getCredentials() async {
-    log('private key is $privateKey');
+    log('private key is election service $privateKey');
     credentials = await web3client.credentialsFromPrivateKey(privateKey);
+    // credentials = await web3client.credentialsFromPrivateKey('077f6e339718cc55ec567b24ec24d301992f6d09b1c91fdfa60f39a4f3eca0fc');
     myEthereumAddress = await credentials.extractAddress();
+    log('eth address is election service $myEthereumAddress');
   }
 
   getDeployedContract() async {
@@ -169,8 +171,8 @@ class ElectionService {
         contract: deployedContract,
         function: functionName,
         parameters: functionArgs,
-        // maxGas: 5,
-        // gasPrice: EtherAmount.inWei(BigInt.from(10)),
+        // maxGas: 5000,
+        // gasPrice: EtherAmount.inWei(BigInt.from(100)),
       ),
     );
 

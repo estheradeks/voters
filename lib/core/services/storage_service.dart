@@ -19,6 +19,12 @@ class StorageService {
     await prefs.setString('role', role);
   }
 
+  // save vote status
+  Future saveVoteStatus(bool status) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('hasVoted', status);
+  }
+
   // get address
   Future getAddress() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -29,6 +35,12 @@ class StorageService {
   Future getPrivateKey() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('privatekey');
+  }
+
+  // get vote status
+    Future getVoteStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('hasVoted');
   }
 
   // get role
@@ -53,5 +65,11 @@ class StorageService {
   Future removeRole() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('role');
+  }
+
+  // remove vote status
+   Future removeVoteStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('hasVoted');
   }
 }

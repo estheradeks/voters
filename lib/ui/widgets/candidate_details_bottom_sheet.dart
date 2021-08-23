@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:voters/core/constants.dart';
+import 'package:voters/core/models/candidate.dart';
+import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/widgets/buttons.dart';
+import 'package:voters/ui/widgets/dialogs.dart';
 import 'package:voters/ui/widgets/text_fields.dart';
 import 'package:voters/utils/theme.dart';
 
@@ -7,9 +11,11 @@ class CandidateDetailsBottomSheet extends StatelessWidget {
   const CandidateDetailsBottomSheet({
     Key key,
     this.isAdmin = false,
+    this.candidate,
   }) : super(key: key);
 
   final bool isAdmin;
+  final Candidate candidate;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +65,7 @@ class CandidateDetailsBottomSheet extends StatelessWidget {
                   hintText: 'First Name',
                   labelText: 'First Name',
                   controller: TextEditingController(
-                    text: 'Esther',
+                    text: candidate.name.split(' ').first,
                   ),
                 ),
                 SizedBox(
@@ -69,7 +75,7 @@ class CandidateDetailsBottomSheet extends StatelessWidget {
                   hintText: 'Last Name',
                   labelText: 'Last Name',
                   controller: TextEditingController(
-                    text: 'Adekunle',
+                    text: candidate.name.split(' ').last,
                   ),
                 ),
                 SizedBox(
@@ -79,7 +85,8 @@ class CandidateDetailsBottomSheet extends StatelessWidget {
                   hintText: 'Email',
                   labelText: 'Email',
                   controller: TextEditingController(
-                    text: 'estheradekunle@gmail.com',
+                    text:
+                        '${candidate.name.split(' ').first.toLowerCase()}@${candidate.name.split(' ').last.toLowerCase()}.com',
                   ),
                 ),
                 SizedBox(
@@ -162,19 +169,15 @@ class CandidateDetailsBottomSheet extends StatelessWidget {
                     ),
                     children: [
                       TextSpan(
-                        text: 'Esther Adekunle',
+                        text: candidate.name.split(' ').first +
+                            ' ' +
+                            candidate.name.split(' ').last,
                         style: TextStyle(
                           color: primaryColor,
                         ),
                       ),
                       TextSpan(
-                        text: ' for the position ',
-                      ),
-                      TextSpan(
-                        text: 'President',
-                        style: TextStyle(
-                          color: primaryColor,
-                        ),
+                        text: ' for this election.',
                       ),
                     ],
                   ),
@@ -187,8 +190,37 @@ class CandidateDetailsBottomSheet extends StatelessWidget {
             ),
           if (!isAdmin)
             VotersFilledButton(
-              text: 'Vote Esther Adekunle',
-              onPressed: () {},
+              text:
+                  'Vote ${candidate.name.split(' ').first}  ${candidate.name.split(' ').last}'
+                      .toUpperCase(),
+              onPressed: () async {
+                StorageService storageService = StorageService();
+
+                showLoadingDialog(context);
+
+                bool hasVoted = await storageService.getVoteStatus() ?? false;
+                if (!hasVoted) {
+                  var result = await electionService.writeContract(
+                    electionService.vote,
+                    [
+                      BigInt.from(candidate.candidateId),
+                    ],
+                  );
+
+                  Navigator.pop(context);
+
+                  if (result != null) {
+                    storageService.saveVoteStatus(true);
+                  }
+                } else {
+                  Navigator.pop(context);
+
+                  showErrorDialog(
+                    context,
+                    'You have already voted for a candidate',
+                  );
+                }
+              },
             ),
         ],
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:voters/ui/modules/voter/voter_bottom_nav/elections/voter_elections_screen.dart';
 import 'package:voters/ui/modules/voter/voter_bottom_nav/profile/voter_profile_screen.dart';
+import 'package:voters/ui/results/election_results_screen.dart';
 
 class VoterBottomNav extends StatefulWidget {
   @override
@@ -13,6 +14,7 @@ class _VoterBottomNavState extends State<VoterBottomNav> {
 
   final _bodyWidgets = [
     VoterElectionsScreen(),
+    ElectionResultsScreen(),
     VoterProfileScreen(),
   ];
 
@@ -37,7 +39,11 @@ class _VoterBottomNavState extends State<VoterBottomNav> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            _currentIndex == 0 ? 'Elections' : 'Profile',
+            _currentIndex == 0
+                ? 'Elections'
+                : _currentIndex == 1
+                    ? 'Results'
+                    : 'Profile',
           ),
           elevation: 0.0,
         ),
@@ -58,6 +64,12 @@ class _VoterBottomNavState extends State<VoterBottomNav> {
                 Icons.how_to_vote_rounded,
               ),
               label: 'Elections',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.ballot_rounded,
+              ),
+              label: 'Results',
             ),
             BottomNavigationBarItem(
               icon: Icon(
