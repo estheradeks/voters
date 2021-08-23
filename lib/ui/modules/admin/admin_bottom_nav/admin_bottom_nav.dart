@@ -11,6 +11,7 @@ class AdminBottomNav extends StatefulWidget {
 
 class _AdminBottomNavState extends State<AdminBottomNav> {
   PageController _pageController;
+  bool _showElectionFab = false;
 
   final _bodyWidgets = [
     AdminElectionsScreen(),
@@ -37,30 +38,32 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
         floatingActionButton: _currentIndex == 0
-            ? FloatingActionButton.extended(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    isDismissible: false,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(20.0),
-                        topLeft: Radius.circular(20.0),
-                      ),
-                    ),
-                    builder: (context) {
-                      return CreateElectionScreen();
+            ? _showElectionFab
+                ? FloatingActionButton.extended(
+                    onPressed: () async {
+                      var result = await showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        isDismissible: false,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(20.0),
+                            topLeft: Radius.circular(20.0),
+                          ),
+                        ),
+                        builder: (context) {
+                          return CreateElectionScreen();
+                        },
+                      );
                     },
-                  );
-                },
-                label: Text(
-                  'Create Election',
-                ),
-                icon: Icon(
-                  Icons.how_to_vote,
-                ),
-              )
+                    label: Text(
+                      'Create Election',
+                    ),
+                    icon: Icon(
+                      Icons.how_to_vote,
+                    ),
+                  )
+                : SizedBox.shrink()
             : SizedBox.shrink(),
         appBar: AppBar(
           title: Text(

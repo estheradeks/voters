@@ -86,7 +86,7 @@ class VoterElectionDetailsScreen extends StatelessWidget {
               child: ElectionPositionCard(
                 positionSN: index + 1,
                 positionName: 'Position Name',
-                noOfCandidates: 5,
+                // noOfCandidates: 5,
                 onTap: () {
                   Navigator.push(
                     context,

@@ -6,13 +6,13 @@ class ElectionPositionCard extends StatelessWidget {
     Key key,
     this.positionSN,
     this.positionName,
-    this.noOfCandidates,
+    this.slogan,
     this.onTap,
   }) : super(key: key);
 
   final int positionSN;
   final String positionName;
-  final int noOfCandidates;
+  final String slogan;
   final VoidCallback onTap;
 
   @override
@@ -62,7 +62,7 @@ class ElectionPositionCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Public Relation Officer',
+                  positionName,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -72,7 +72,7 @@ class ElectionPositionCard extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  '4 Candidates',
+                  slogan,
                 ),
               ],
             ),

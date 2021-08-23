@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:voters/core/constants.dart';
+import 'package:voters/core/services/election_service.dart';
 import 'package:voters/core/services/helpers.dart';
 import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/auth/sign_up_screen.dart';
@@ -46,13 +48,13 @@ class _SignInScreenState extends State<SignInScreen> {
       String address = document.data()['address'];
       String privateKey = document.data()['private_key'];
 
+      electionService = ElectionService(privateKey);
+
       // save to storage
       StorageService storageService = StorageService();
       storageService.saveAddress(address);
       storageService.savePrivateKey(privateKey);
       storageService.saveRole('admin');
-      
-      Navigator.pop(context);
 
       Widget _screenToGo;
       if (_isVoter) {

@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:voters/core/constants.dart';
+import 'package:voters/core/models/candidate.dart';
 import 'package:voters/ui/widgets/buttons.dart';
+import 'package:voters/ui/widgets/dialogs.dart';
 import 'package:voters/ui/widgets/text_fields.dart';
 import 'package:voters/utils/theme.dart';
 
-class CreateCandidateScreen extends StatelessWidget {
-  const CreateCandidateScreen({Key key}) : super(key: key);
+class CreateCandidateScreen extends StatefulWidget {
+  @override
+  _CreateCandidateScreenState createState() => _CreateCandidateScreenState();
+}
+
+class _CreateCandidateScreenState extends State<CreateCandidateScreen> {
+  String _candidateName = '';
+
+  String _candidateSlogan = '';
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.9,
+      // height: MediaQuery.of(context).size.height * 0.9,
+      height: 500,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
       child: Column(
@@ -51,58 +62,79 @@ class CreateCandidateScreen extends StatelessWidget {
                   height: 20,
                 ),
                 VotersTextField(
-                  hintText: 'First Name',
-                  labelText: 'First Name',
+                  hintText: 'Candidate Name',
+                  labelText: 'Candidate Name',
+                  onChanged: (val) {
+                    setState(() {
+                      _candidateName = val;
+                    });
+                  },
                 ),
                 SizedBox(
                   height: 15,
                 ),
                 VotersTextField(
-                  hintText: 'Last Name',
-                  labelText: 'Last Name',
+                  hintText: 'Candidate Slogan',
+                  labelText: 'Candidate Slogan',
+                  onChanged: (val) {
+                    setState(() {
+                      _candidateSlogan = val;
+                    });
+                  },
                 ),
-                SizedBox(
-                  height: 15,
-                ),
-                VotersTextField(
-                  hintText: 'Email',
-                  labelText: 'Email',
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                VotersTextField(
-                  hintText: 'Phone Number',
-                  labelText: 'Phone Number',
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                VotersTextField(
-                  hintText: 'Gender',
-                  labelText: 'Gender',
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                VotersTextField(
-                  hintText: 'Date of Birth',
-                  labelText: 'Date of Birth',
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                VotersTextField(
-                  hintText: 'State',
-                  labelText: 'State',
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                VotersTextField(
-                  hintText: 'LGA',
-                  labelText: 'LGA',
-                ),
+                // VotersTextField(
+                //   hintText: 'First Name',
+                //   labelText: 'First Name',
+                // ),
+                // SizedBox(
+                //   height: 15,
+                // ),
+                // VotersTextField(
+                //   hintText: 'Last Name',
+                //   labelText: 'Last Name',
+                // ),
+                // SizedBox(
+                //   height: 15,
+                // ),
+                // VotersTextField(
+                //   hintText: 'Email',
+                //   labelText: 'Email',
+                // ),
+                // SizedBox(
+                //   height: 15,
+                // ),
+                // VotersTextField(
+                //   hintText: 'Phone Number',
+                //   labelText: 'Phone Number',
+                // ),
+                // SizedBox(
+                //   height: 15,
+                // ),
+                // VotersTextField(
+                //   hintText: 'Gender',
+                //   labelText: 'Gender',
+                // ),
+                // SizedBox(
+                //   height: 15,
+                // ),
+                // VotersTextField(
+                //   hintText: 'Date of Birth',
+                //   labelText: 'Date of Birth',
+                // ),
+                // SizedBox(
+                //   height: 15,
+                // ),
+                // VotersTextField(
+                //   hintText: 'State',
+                //   labelText: 'State',
+                // ),
+                // SizedBox(
+                //   height: 15,
+                // ),
+                // VotersTextField(
+                //   hintText: 'LGA',
+                //   labelText: 'LGA',
+                // ),
                 SizedBox(
                   height: 20,
                 ),
@@ -154,8 +186,28 @@ class CreateCandidateScreen extends StatelessWidget {
             height: 20,
           ),
           VotersFilledButton(
-            text: 'Create Candidate',
-            onPressed: () {},
+            text: 'Create Candidate'.toUpperCase(),
+            onPressed: () async {
+              showLoadingDialog(context);
+
+              var result = await electionService.writeContract(
+                electionService.addCandidate,
+                [
+                  _candidateName,
+                  _candidateSlogan,
+                ],
+              );
+
+              Navigator.pop(context);
+
+              if (result != null) {
+                Candidate candidate = Candidate(
+                  name: _candidateName,
+                  slogan: _candidateSlogan,
+                );
+                Navigator.pop(context, candidate);
+              }
+            },
           ),
         ],
       ),

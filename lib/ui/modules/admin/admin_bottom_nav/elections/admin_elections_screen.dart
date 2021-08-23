@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:voters/core/constants.dart';
 import 'package:voters/core/models/voter_admin.dart';
 import 'package:voters/core/services/election_service.dart';
 import 'package:voters/ui/modules/admin/admin_bottom_nav/elections/election_details_screen.dart';
@@ -17,8 +18,8 @@ class AdminElectionsScreen extends StatefulWidget {
 class _AdminElectionsScreenState extends State<AdminElectionsScreen> {
   VoterAdmin _voterAdmin;
   bool _isLoading = false;
-  ElectionService _electionService;
-
+  bool _hasElectionStarted;
+  String electionTitle = '';
   @override
   void initState() {
     super.initState();
@@ -29,7 +30,9 @@ class _AdminElectionsScreenState extends State<AdminElectionsScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => AdminElectionDetailScreen(),
+        builder: (_) => AdminElectionDetailScreen(
+          electionName: electionTitle,
+        ),
       ),
     );
   }
@@ -45,9 +48,20 @@ class _AdminElectionsScreenState extends State<AdminElectionsScreen> {
     await _getAdminKeyAndAddress();
 
     // get election status
-    _electionService.readContract(_electionService.getStart, []);
+    var resultList = await electionService.readContract(
+      electionService.getStart,
+      [],
+    );
+    _hasElectionStarted = resultList.first;
 
     // if there is an election, get election details
+    if (_hasElectionStarted) {
+      var results = await electionService.readContract(
+        electionService.getElectionTitle,
+        [],
+      );
+      electionTitle = results.first;
+    }
     setState(() {
       _isLoading = false;
     });
@@ -62,8 +76,6 @@ class _AdminElectionsScreenState extends State<AdminElectionsScreen> {
     _voterAdmin = VoterAdmin.fromJson(
       document.data(),
     );
-    _electionService = ElectionService(_voterAdmin.privateKey);
-    await Future.delayed(Duration(seconds: 3));
   }
 
   @override
@@ -106,23 +118,53 @@ class _AdminElectionsScreenState extends State<AdminElectionsScreen> {
                   hintText: 'ETH Balance',
                   labelText: 'ETH Balance',
                   controller: TextEditingController(
-                    text: '500 ETH',
+                    text: '928.29 ETH',
                   ),
                   readOnly: true,
                 ),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      'No Elections, create an election to by clicking the create button!',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF62961D),
-                      ),
-                      textAlign: TextAlign.center,
+                if (_hasElectionStarted)
+                  SizedBox(
+                    height: 40,
+                  ),
+                if (_hasElectionStarted)
+                  SizedBox(
+                    height: 300,
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Ongoing Election',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        UpcomingElectionCard(
+                          onTap: _pushToElectionDetails,
+                          electionName: electionTitle,
+                        ),
+                      ],
                     ),
                   ),
-                ),
+                if (!_hasElectionStarted)
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        'No Election, create an election by clicking the create button!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF62961D),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
 
                 // SizedBox(
                 //   height: 270,

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:voters/core/constants.dart';
+import 'package:voters/core/services/election_service.dart';
 import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/auth/get_started_screen.dart';
 import 'package:voters/ui/auth/sign_up_screen.dart';
@@ -33,6 +35,9 @@ class _SplashScreenState extends State<SplashScreen> {
         String role = await storageService.getRole();
         bool isAdmin = role == 'admin';
         bool isLoggedIn = address != null && privateKey != null;
+        if (isLoggedIn) {
+          electionService = ElectionService(privateKey);
+        }
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

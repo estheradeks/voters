@@ -2,6 +2,7 @@
     package="com.adeksydeks.voters">
    <application
         android:label="voters"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

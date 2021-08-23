@@ -18,9 +18,9 @@ class ElectionService {
   Web3Client web3client;
 
   // rcp url
-  String rcpUrl = 'http://127.0.0.1:7545';
+  String rcpUrl = 'http://10.0.2.2:7545';
   // ws url
-  String wsUrl = "ws://127.0.0.1:7545/";
+  String wsUrl = "ws://10.0.2.2:7545/";
 
   /// This will construct [credentials] with the provided [privateKey]
   /// and load the Ethereum address in [myAdderess] specified by these credentials.
@@ -60,6 +60,7 @@ class ElectionService {
   ContractFunction endElection;
   ContractFunction getStart;
   ContractFunction getEnd;
+  ContractFunction candidateDetails;
 
   Future<void> initialSetup() async {
     httpClient = Client();
@@ -130,6 +131,8 @@ class ElectionService {
     getStart = deployedContract.function('getStart');
     // get election end
     getEnd = deployedContract.function('getEnd');
+    // candidate details
+    candidateDetails = deployedContract.function('candidateDetails');
   }
 
   /// This will call a [functionName] with [functionArgs] as parameters
@@ -138,7 +141,9 @@ class ElectionService {
     ContractFunction functionName,
     List<dynamic> functionArgs,
   ) async {
+    log('result from read contract => ${functionName.name} function');
     var queryResult = await web3client.call(
+      // sender: myEthereumAddress,
       contract: deployedContract,
       function: functionName,
       params: functionArgs,
@@ -149,21 +154,25 @@ class ElectionService {
 
   /// Signs the given transaction using the keys supplied in the [credentials] object
   /// to upload it to the client so that it can be executed
-  Future<void> writeContract(
+  Future<String> writeContract(
     ContractFunction functionName,
     List<dynamic> functionArgs,
   ) async {
+    log('result from write contract => ${functionName.name}');
+
     var result = await web3client.sendTransaction(
       credentials,
       Transaction.callContract(
         contract: deployedContract,
         function: functionName,
         parameters: functionArgs,
-        maxGas: 5,
-        gasPrice: EtherAmount.inWei(BigInt.from(5)),
+        // maxGas: 5,
+        // gasPrice: EtherAmount.inWei(BigInt.from(10)),
       ),
     );
 
     log('result from write contract => ${functionName.name} function  =>> is $result');
+
+    return result;
   }
 }
