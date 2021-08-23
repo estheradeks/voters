@@ -61,6 +61,7 @@ class ElectionService {
   ContractFunction getStart;
   ContractFunction getEnd;
   ContractFunction candidateDetails;
+  ContractFunction voterDetails;
 
   Future<void> initialSetup() async {
     httpClient = Client();
@@ -133,6 +134,8 @@ class ElectionService {
     getEnd = deployedContract.function('getEnd');
     // candidate details
     candidateDetails = deployedContract.function('candidateDetails');
+    // candidate details
+    voterDetails = deployedContract.function('voterDetails');
   }
 
   /// This will call a [functionName] with [functionArgs] as parameters

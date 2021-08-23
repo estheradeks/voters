@@ -223,7 +223,7 @@ class _AdminElectionsScreenState extends State<AdminElectionsScreen> {
                   SizedBox(
                     height: 30,
                   ),
-
+  
                   // SizedBox(
                   //   height: 270,
                   //   width: double.infinity,

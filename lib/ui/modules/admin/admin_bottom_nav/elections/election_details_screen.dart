@@ -81,8 +81,11 @@ class _AdminElectionDetailScreenState extends State<AdminElectionDetailScreen> {
               return CreateCandidateScreen();
             },
           );
-          _candidatesList.add(result);
-          _noOfCandidates = _noOfCandidates + 1;
+          if (result != null) {
+            _candidatesList.add(result);
+            _noOfCandidates = _noOfCandidates + 1;
+          }
+
           setState(() {});
         },
         label: Text(
