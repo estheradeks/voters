@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:voters/ui/modules/admin/admin_bottom_nav/elections/admin_elections_screen.dart';
 import 'package:voters/ui/modules/admin/admin_bottom_nav/elections/create_election_screen.dart';
 import 'package:voters/ui/modules/admin/admin_bottom_nav/profile/admin_profile_screen.dart';
+import 'package:voters/ui/results/election_results_screen.dart';
 
 class AdminBottomNav extends StatefulWidget {
   @override
@@ -15,6 +16,7 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
 
   final _bodyWidgets = [
     AdminElectionsScreen(),
+    ElectionResultsScreen(),
     AdminProfileScreen(),
   ];
 
@@ -67,7 +69,11 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
             : SizedBox.shrink(),
         appBar: AppBar(
           title: Text(
-            _currentIndex == 0 ? 'Elections' : 'Profile',
+            _currentIndex == 0
+                ? 'Elections'
+                : _currentIndex == 1
+                    ? 'Results'
+                    : 'Profile',
           ),
           elevation: 0.0,
         ),
@@ -88,6 +94,12 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
                 Icons.how_to_vote_rounded,
               ),
               label: 'Elections',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.ballot_rounded,
+              ),
+              label: 'Results',
             ),
             BottomNavigationBarItem(
               icon: Icon(

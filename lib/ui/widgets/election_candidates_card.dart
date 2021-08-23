@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:voters/utils/theme.dart';
 
 class ElectionCandidateCard extends StatelessWidget {
- const ElectionCandidateCard({
+  const ElectionCandidateCard({
     Key key,
+    this.positionSN,
     this.imgUrl,
     this.candidateName,
     this.noOfVotes,
@@ -11,6 +12,7 @@ class ElectionCandidateCard extends StatelessWidget {
     this.onTap,
   }) : super(key: key);
 
+  final int positionSN;
   final String imgUrl;
   final String candidateName;
   final int noOfVotes;
@@ -45,6 +47,16 @@ class ElectionCandidateCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5.0),
                 color: primaryColor.withOpacity(.3),
               ),
+              child: Center(
+                child: Text(
+                  '$positionSN',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
+                  ),
+                ),
+              ),
             ),
             SizedBox(
               width: 10,
@@ -54,7 +66,7 @@ class ElectionCandidateCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Esther Adekunle',
+                  candidateName,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -64,13 +76,13 @@ class ElectionCandidateCard extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  'Excellence, Moving Forward',
+                  catchPhrase,
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 Text(
-                  '200 Votes',
+                  '$noOfVotes Votes',
                 ),
               ],
             ),

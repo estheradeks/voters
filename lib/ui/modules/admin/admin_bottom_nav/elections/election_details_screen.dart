@@ -188,12 +188,12 @@ class _AdminElectionDetailScreenState extends State<AdminElectionDetailScreen> {
                   slogan: _candidatesList[index].slogan,
                   // noOfCandidates: 5,
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => AdminCandidatesScreen(),
-                      ),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (_) => AdminCandidatesScreen(),
+                    //   ),
+                    // );
                   },
                 ),
               ),
