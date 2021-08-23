@@ -184,6 +184,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       .get();
 
                   if (documentSnapshot.exists) {
+                    ff.collection('addresses').doc(_ethPrivateKey).update(
+                      {
+                        'has_registered': true,
+                      },
+                    );
                     // get the eth_address from firebase
                     Map data = documentSnapshot.data();
                     _ethAddress = data['eth_address'];

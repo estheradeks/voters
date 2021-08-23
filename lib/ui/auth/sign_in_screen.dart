@@ -26,58 +26,102 @@ class _SignInScreenState extends State<SignInScreen> {
 
   String _email = '';
   String _password = '';
+  String _ethPrivateKey = '';
+
+  _changeRole() {
+    setState(() {
+      _isVoter = !_isVoter;
+    });
+  }
 
   void _adminLogin() async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    FirebaseFirestore ff = FirebaseFirestore.instance;
+    StorageService storageService = StorageService();
+    Widget _screenToGo;
 
     showLoadingDialog(context);
 
-    try {
-      UserCredential userCredential =
-          await firebaseAuth.signInWithEmailAndPassword(
-        email: _email,
-        password: _password,
-      );
+    if (_isVoter) {
+      DocumentSnapshot documentSnapshot =
+          await ff.collection('addresses').doc(_ethPrivateKey).get();
 
-      // get data from firebase
-      FirebaseFirestore ff = FirebaseFirestore.instance;
-      DocumentSnapshot document = await ff
-          .collection('admin')
-          .doc('8BvyYNbx2AVxfZZXwA9JlB4jOLr1')
-          .get();
-      String address = document.data()['address'];
-      String privateKey = document.data()['private_key'];
+      if (documentSnapshot.exists) {
+        Map data = documentSnapshot.data();
+        bool hasRegistered = data['has_registered'];
 
-      electionService = ElectionService(privateKey);
+        if (hasRegistered) {
+          // save to storage
+          storageService.saveAddress(data['eth_address']);
+          storageService.savePrivateKey(_ethPrivateKey);
+          storageService.saveRole('voter');
 
-      // save to storage
-      StorageService storageService = StorageService();
-      storageService.saveAddress(address);
-      storageService.savePrivateKey(privateKey);
-      storageService.saveRole('admin');
+          Navigator.pop(context);
+          _screenToGo = VoterBottomNav();
 
-      Widget _screenToGo;
-      if (_isVoter) {
-        // navigate to voter module
-        _screenToGo = VoterBottomNav();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => _screenToGo,
+            ),
+          );
+        } else {
+          showErrorDialog(
+            context,
+            'Proceed to registration before loging in',
+          );
+        }
       } else {
+        showErrorDialog(
+          context,
+          'Invalid ETH Private Key',
+        );
+      }
+    } else {
+      try {
+        UserCredential userCredential =
+            await firebaseAuth.signInWithEmailAndPassword(
+          email: _email,
+          password: _password,
+        );
+
+        // if (_isVoter) {
+        // navigate to voter module
+        // } else {
+        // get data from firebase
+        DocumentSnapshot document = await ff
+            .collection('admin')
+            .doc('8BvyYNbx2AVxfZZXwA9JlB4jOLr1')
+            .get();
+        String address = document.data()['address'];
+        String privateKey = document.data()['private_key'];
+
+        electionService = ElectionService(privateKey);
+
+        // save to storage
+        storageService.saveAddress(address);
+        storageService.savePrivateKey(privateKey);
+        storageService.saveRole('admin');
+
         // navigate to admin module
         _screenToGo = AdminBottomNav();
-      }
-      // pop the get started screen
-      Navigator.pop(context);
+        Navigator.pop(context);
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => _screenToGo,
-        ),
-      );
-    } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
-      String errorMessage = catchFirebaseException(e);
-      log('error message is ${e.code}');
-      showErrorDialog(context, errorMessage);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => _screenToGo,
+          ),
+        );
+        // }
+        // pop the get started screen
+
+      } on FirebaseAuthException catch (e) {
+        Navigator.pop(context);
+        String errorMessage = catchFirebaseException(e);
+        log('error message is ${e.code}');
+        showErrorDialog(context, errorMessage);
+      }
     }
   }
 
@@ -106,54 +150,72 @@ class _SignInScreenState extends State<SignInScreen> {
             SizedBox(
               height: 30,
             ),
-            VotersTextField(
-              labelText: 'Email',
-              hintText: 'email@email.com',
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
-              validator: validateEmail,
-              onChanged: (val) {
-                setState(() {
-                  _email = val.trim();
-                });
-              },
-            ),
+            if (!_isVoter)
+              Column(
+                children: [
+                  VotersTextField(
+                    labelText: 'Email',
+                    hintText: 'email@email.com',
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    validator: validateEmail,
+                    onChanged: (val) {
+                      setState(() {
+                        _email = val.trim();
+                      });
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  VotersTextField(
+                    labelText: 'Password',
+                    hintText: 'password',
+                    keyboardType: TextInputType.visiblePassword,
+                    textInputAction: TextInputAction.done,
+                    validator: (val) =>
+                        validateRequiredFields(val.trim(), 'Password'),
+                    onChanged: (val) {
+                      setState(() {
+                        _password = val.trim();
+                      });
+                    },
+                  ),
+                ],
+              ),
+            if (_isVoter)
+              VotersTextField(
+                labelText: 'ETH Private Key',
+                hintText: 'ETH Private Key',
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.next,
+                validator: validateEmail,
+                onChanged: (val) {
+                  setState(() {
+                    _ethPrivateKey = val.trim();
+                  });
+                },
+              ),
             SizedBox(
-              height: 20,
+              height: 15,
             ),
-            VotersTextField(
-              labelText: 'Password',
-              hintText: 'password',
-              keyboardType: TextInputType.visiblePassword,
-              textInputAction: TextInputAction.done,
-              validator: (val) =>
-                  validateRequiredFields(val.trim(), 'Password'),
-              onChanged: (val) {
-                setState(() {
-                  _password = val.trim();
-                });
-              },
+            Align(
+              alignment: Alignment.centerRight,
+              child: InkWell(
+                onTap: _changeRole,
+                customBorder: StadiumBorder(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Text(
+                    'Switch to ${_isVoter ? 'Admin' : 'Voter'} Log In',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
             ),
-            // SizedBox(
-            //   height: 15,
-            // ),
-            // Align(
-            //   alignment: Alignment.centerRight,
-            //   child: InkWell(
-            //     onTap: _changeRole,
-            //     customBorder: StadiumBorder(),
-            //     child: Padding(
-            //       padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            //       child: Text(
-            //         'Switch to ${_isVoter ? 'Admin' : 'Voter'} Log In',
-            //         style: TextStyle(
-            //           fontSize: 14,
-            //           fontWeight: FontWeight.w700,
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
             SizedBox(
               height: 35,
             ),
