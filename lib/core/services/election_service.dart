@@ -171,8 +171,8 @@ class ElectionService {
         contract: deployedContract,
         function: functionName,
         parameters: functionArgs,
-        // maxGas: 5000,
-        // gasPrice: EtherAmount.inWei(BigInt.from(100)),
+        // maxGas: 60,
+        // gasPrice: EtherAmount.inWei(BigInt.from(50)),
       ),
     );
 

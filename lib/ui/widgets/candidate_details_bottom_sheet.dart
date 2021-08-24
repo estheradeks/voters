@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:voters/core/constants.dart';
 import 'package:voters/core/models/candidate.dart';
 import 'package:voters/core/services/storage_service.dart';
+import 'package:voters/ui/modules/admin/admin_bottom_nav/voters/face_reg_screen.dart';
 import 'package:voters/ui/widgets/buttons.dart';
 import 'package:voters/ui/widgets/dialogs.dart';
 import 'package:voters/ui/widgets/text_fields.dart';
@@ -202,29 +203,48 @@ class CandidateDetailsBottomSheet extends StatelessWidget {
 
                 bool hasVoted = await storageService.getVoteStatus();
 
-                log('candidate id is ${candidate.candidateId}');
-                log('candidate id is ${BigInt.from(candidate.candidateId)}');
-                if (!hasVoted) {
-                  var result = await electionService.writeContract(
-                    electionService.vote,
-                    [
-                      BigInt.from(candidate.candidateId),
-                    ],
-                  );
+                // also check face befroe they vote
+                // bool result = await Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (_) => VotersFaceRegScreen(),
+                //   ),
+                // );
 
-                  Navigator.pop(context);
+                // if (result) {
+                  // face is verified
+                  // vote
 
-                  if (result != null) {
-                    storageService.saveVoteStatus(true);
+                  log('candidate id is ${candidate.candidateId}');
+                  log('candidate id is ${BigInt.from(candidate.candidateId)}');
+                  if (!hasVoted) {
+                    var result = await electionService.writeContract(
+                      electionService.vote,
+                      [
+                        BigInt.from(candidate.candidateId),
+                      ],
+                    );
+
+                    Navigator.pop(context);
+
+                    if (result != null) {
+                      storageService.saveVoteStatus(true);
+                    }
+                  } else {
+                    Navigator.pop(context);
+
+                    showErrorDialog(
+                      context,
+                      'You have already voted for a candidate',
+                    );
                   }
-                } else {
-                  Navigator.pop(context);
-
-                  showErrorDialog(
-                    context,
-                    'You have already voted for a candidate',
-                  );
-                }
+                // } else {
+                //   // face not veirifed
+                //   showErrorDialog(
+                //     context,
+                //     'Face verification failed',
+                //   );
+                // }
               },
             ),
         ],

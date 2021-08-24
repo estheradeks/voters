@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/auth/get_started_screen.dart';
 import 'package:voters/ui/widgets/buttons.dart';
 import 'package:voters/ui/widgets/text_fields.dart';
@@ -106,7 +107,11 @@ class VoterProfileScreen extends StatelessWidget {
         ),
         VotersOutlinedButton(
           text: 'Logout',
-          onPressed: () {
+          onPressed: () async {
+            StorageService storageService = StorageService();
+            await storageService.removeAddress();
+            await storageService.removePrivateKey();
+            await storageService.removeRole();
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(

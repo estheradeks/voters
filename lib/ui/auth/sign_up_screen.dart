@@ -1,12 +1,15 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:voters/core/constants.dart';
 import 'package:voters/core/services/election_service.dart';
+import 'package:voters/core/services/face_reg_service.dart';
 import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/auth/sign_in_screen.dart';
 import 'package:voters/ui/modules/voter/voter_bottom_nav/voter_bottom_nav.dart';
@@ -28,6 +31,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String _email = '';
   String _phoneNumber = '';
   String gender = '';
+  final ImagePicker _picker = ImagePicker();
+  File _image;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,6 +64,58 @@ class _SignUpScreenState extends State<SignUpScreen> {
               SizedBox(
                 height: 30,
               ),
+              // their image here
+              InkWell(
+                onTap: () async {
+                  final XFile photo =
+                      await _picker.pickImage(source: ImageSource.camera);
+
+                  if (photo != null) {
+                    _image = File(photo.path);
+                  }
+                  setState(() {});
+                },
+                child: Align(
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: 120,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: primaryColor.withOpacity(.5),
+                        ),
+                        child: _image != null
+                            ? ClipOval(
+                                child: Image.file(
+                                  _image,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : SizedBox.shrink(),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 5,
+                        child: Container(
+                          height: 30,
+                          width: 30,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: whiteColor,
+                          ),
+                          child: Center(
+                            child: Icon(
+                              Icons.camera_rounded,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
               // VotersTextField(
               //   labelText: 'ETH Address',
               //   hintText: 'ETH Adress',
@@ -173,77 +231,108 @@ class _SignUpScreenState extends State<SignUpScreen> {
               VotersFilledButton(
                 text: 'Create a Voter Account',
                 onPressed: () async {
-                  showLoadingDialog(context);
+                  if (_image != null) {
+                    showLoadingDialog(context);
 
-                  // check if the private key matches any from the database
-                  FirebaseFirestore ff = FirebaseFirestore.instance;
+                    // check if the private key matches any from the database
+                    FirebaseFirestore ff = FirebaseFirestore.instance;
 
-                  DocumentSnapshot documentSnapshot = await ff
-                      .collection('addresses')
-                      .doc(_ethPrivateKey)
-                      .get();
-
-                  if (documentSnapshot.exists) {
-                    ff.collection('addresses').doc(_ethPrivateKey).update(
-                      {
-                        'has_registered': true,
-                      },
-                    );
-                    // get the eth_address from firebase
-                    Map data = documentSnapshot.data();
-                    _ethAddress = data['eth_address'];
-
-                    log('eth address is $_ethAddress');
-                    // save to local storage
-                    StorageService storageService = StorageService();
-
-                    storageService.saveAddress(_ethAddress);
-                    storageService.savePrivateKey(_ethPrivateKey);
-                    storageService.saveRole('voter');
-                    storageService.saveVoteStatus(false);
-
-                    electionService = ElectionService(_ethPrivateKey);
-
-                    await Future.delayed(Duration(seconds: 6));
-
-                    var result = await electionService.writeContract(
-                      electionService.registerAsVoter,
-                      [
-                        firstName + ' ' + lastName,
-                        _phoneNumber,
-                      ],
-                    );
-
-                    DocumentSnapshot ds = await ff
-                        .collection('voters_addresses')
-                        .doc('addresses')
+                    DocumentSnapshot documentSnapshot = await ff
+                        .collection('addresses')
+                        .doc(_ethPrivateKey)
                         .get();
 
-                    List dataArray = ds.data()['data'];
-                    dataArray = dataArray..add(_ethAddress);
+                    if (documentSnapshot.exists) {
+                      // upload image
+                      bool result = await FaceRegService.registerFace(
+                          _image, _ethPrivateKey);
+                      log('upload image result is $result');
 
-                    ff.collection('voters_addresses').doc('addresses').update(
-                      {
-                        'data': [
-                          ...dataArray,
-                        ],
-                      },
-                    );
+                      if (result) {
+                        if (!documentSnapshot.data()['has_registered']) {
+                          ff.collection('addresses').doc(_ethPrivateKey).update(
+                            {
+                              'has_registered': true,
+                            },
+                          );
+                          // get the eth_address from firebase
+                          Map data = documentSnapshot.data();
+                          _ethAddress = data['eth_address'];
 
-                    if (result != null) {
-                      // push to new screen
-                      Navigator.pushReplacement(
+                          log('eth address is $_ethAddress');
+                          // save to local storage
+                          StorageService storageService = StorageService();
+
+                          storageService.saveAddress(_ethAddress);
+                          storageService.savePrivateKey(_ethPrivateKey);
+                          storageService.saveRole('voter');
+                          storageService.saveVoteStatus(false);
+
+                          electionService = ElectionService(_ethPrivateKey);
+
+                          await Future.delayed(Duration(seconds: 6));
+
+                          var result = await electionService.writeContract(
+                            electionService.registerAsVoter,
+                            [
+                              firstName + ' ' + lastName,
+                              _phoneNumber,
+                            ],
+                          );
+
+                          DocumentSnapshot ds = await ff
+                              .collection('voters_addresses')
+                              .doc('addresses')
+                              .get();
+
+                          List dataArray = ds.data()['data'];
+                          dataArray = dataArray..add(_ethAddress);
+
+                          ff
+                              .collection('voters_addresses')
+                              .doc('addresses')
+                              .update(
+                            {
+                              'data': [
+                                ...dataArray,
+                              ],
+                            },
+                          );
+
+                          if (result != null) {
+                            // push to new screen
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => VoterBottomNav(),
+                              ),
+                            );
+                          }
+                        } else {
+                          Navigator.pop(context);
+                          showErrorDialog(
+                            context,
+                            'User has already registered using this ETH Private Key',
+                          );
+                        }
+                      } else {
+                        Navigator.pop(context);
+                        showErrorDialog(
+                          context,
+                          'Error while uploading image, try again.',
+                        );
+                      }
+                    } else {
+                      Navigator.pop(context);
+                      showErrorDialog(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => VoterBottomNav(),
-                        ),
+                        'Incorrect ETH Priate Key',
                       );
                     }
                   } else {
-                    Navigator.pop(context);
                     showErrorDialog(
                       context,
-                      'Incorrect ETH Priate Key',
+                      'Please upload your picture before proceeding.',
                     );
                   }
                 },

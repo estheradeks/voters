@@ -66,6 +66,8 @@ class _SignInScreenState extends State<SignInScreen> {
             ),
           );
         } else {
+          Navigator.pop(context);
+
           showErrorDialog(
             context,
             'Proceed to registration before loging in',
