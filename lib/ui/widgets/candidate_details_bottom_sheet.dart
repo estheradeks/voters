@@ -78,7 +78,7 @@ class _CandidateDetailsBottomSheetState
       );
       _votersLists.add(
         Voter(
-          voterAddress: result[0].toString().toLowerCase(),
+          voterAddress: result[0].toString(),
           name: result[1],
           phone: result[2],
           isVerified: result[3],
@@ -86,6 +86,7 @@ class _CandidateDetailsBottomSheetState
           hasRegistered: result[5],
         ),
       );
+      log('here legggo ${EthereumAddress.fromHex(_votersAddresses[i].toString().toLowerCase())}');
       log('voters list herrrrrrr $_votersLists');
       if (_votersLists[i].voterAddress == _ethAddress.toLowerCase()) {
         log('found ittt!!! ${_votersLists[i].hasVoted}');
