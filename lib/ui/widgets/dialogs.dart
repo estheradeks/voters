@@ -134,6 +134,7 @@ void showSuccessBottomSheet(
                 StorageService storageService = StorageService();
                 String role = await storageService.getRole();
                 bool isAdmin = role == 'admin';
+                
                 Navigator.pop(context);
 
                 // go to dashboard
@@ -191,13 +192,14 @@ void showErrorBottomSheet(
             VotersOutlinedButton(
               text: 'Continue',
               onPressed: () async {
-                Navigator.pop(context);
 
                 // log out
                 StorageService storageService = StorageService();
                 await storageService.removeAddress();
                 await storageService.removePrivateKey();
                 await storageService.removeRole();
+
+                Navigator.pop(context);
 
                 // go to login
                 Navigator.pushReplacement(

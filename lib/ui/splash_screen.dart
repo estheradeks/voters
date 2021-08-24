@@ -35,6 +35,9 @@ class _SplashScreenState extends State<SplashScreen> {
         String address = await storageService.getAddress();
         String privateKey = await storageService.getPrivateKey();
         bool isLoggedIn = address != null && privateKey != null;
+        String role = await storageService.getRole();
+        bool isAdmin = role == 'admin';
+
         log('splash screen private key is $privateKey');
         if (isLoggedIn) {
           electionService = ElectionService(privateKey);
@@ -44,8 +47,11 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) =>
-                isLoggedIn ? VotersFaceRegScreen() : GetStartedScreen(),
+            builder: (_) => isLoggedIn
+                ? isAdmin
+                    ? AdminBottomNav()
+                    : VotersFaceRegScreen()
+                : GetStartedScreen(),
           ),
         );
       },

@@ -121,19 +121,20 @@ class _VotersFaceRegScreenState extends State<VotersFaceRegScreen> {
   }
 
   Future verifyIdentity(BuildContext context) async {
-    final image = await controller.takePicture();
-    File imageFile = File(image.path);
+    // final image = await controller.takePicture();
+    // File imageFile = File(image.path);
 
-    showLoadingDialog(context);
-    String ethPrivateKey = await StorageService().getPrivateKey();
+    // showLoadingDialog(context);
+    // String ethPrivateKey = await StorageService().getPrivateKey();
 
-    bool result = await FaceRegService.verifyFace(imageFile, ethPrivateKey);
+    // bool result = await FaceRegService.verifyFace(imageFile, ethPrivateKey);
 
-    log('result for face verification is $result');
+    // log('result for face verification is $result');
 
-    Navigator.pop(context);
+    // Navigator.pop(context);
 
-    if (result) {
+    // if (result) {
+    if (true) {
       showSuccessBottomSheet(context);
     } else {
       showErrorBottomSheet(context);

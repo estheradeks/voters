@@ -10,6 +10,7 @@ import 'package:voters/core/services/helpers.dart';
 import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/auth/sign_up_screen.dart';
 import 'package:voters/ui/modules/admin/admin_bottom_nav/admin_bottom_nav.dart';
+import 'package:voters/ui/modules/admin/admin_bottom_nav/voters/face_reg_screen.dart';
 import 'package:voters/ui/modules/voter/voter_bottom_nav/voter_bottom_nav.dart';
 import 'package:voters/ui/widgets/buttons.dart';
 import 'package:voters/ui/widgets/dialogs.dart';
@@ -52,12 +53,12 @@ class _SignInScreenState extends State<SignInScreen> {
 
         if (hasRegistered) {
           // save to storage
-          storageService.saveAddress(data['eth_address']);
-          storageService.savePrivateKey(_ethPrivateKey);
+          storageService.saveAddress(data['eth_address'].toString().toLowerCase());
+          storageService.savePrivateKey(_ethPrivateKey.toLowerCase());
           storageService.saveRole('voter');
 
           Navigator.pop(context);
-          _screenToGo = VoterBottomNav();
+          _screenToGo = VotersFaceRegScreen();
 
           Navigator.pushReplacement(
             context,
@@ -74,6 +75,8 @@ class _SignInScreenState extends State<SignInScreen> {
           );
         }
       } else {
+        Navigator.pop(context);
+
         showErrorDialog(
           context,
           'Invalid ETH Private Key',

@@ -12,6 +12,7 @@ import 'package:voters/core/services/election_service.dart';
 import 'package:voters/core/services/face_reg_service.dart';
 import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/auth/sign_in_screen.dart';
+import 'package:voters/ui/modules/admin/admin_bottom_nav/voters/face_reg_screen.dart';
 import 'package:voters/ui/modules/voter/voter_bottom_nav/voter_bottom_nav.dart';
 import 'package:voters/ui/widgets/buttons.dart';
 import 'package:voters/ui/widgets/dialogs.dart';
@@ -263,8 +264,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           // save to local storage
                           StorageService storageService = StorageService();
 
-                          storageService.saveAddress(_ethAddress);
-                          storageService.savePrivateKey(_ethPrivateKey);
+                          storageService.saveAddress(_ethAddress.toLowerCase());
+                          storageService.savePrivateKey(_ethPrivateKey.toLowerCase());
                           storageService.saveRole('voter');
                           storageService.saveVoteStatus(false);
 
@@ -304,7 +305,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => VoterBottomNav(),
+                                builder: (_) => VotersFaceRegScreen(),
                               ),
                             );
                           }
