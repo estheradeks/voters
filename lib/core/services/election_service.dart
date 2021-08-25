@@ -18,9 +18,11 @@ class ElectionService {
   Web3Client web3client;
 
   // rcp url
-  String rcpUrl = 'http://10.0.2.2:7545';
+  String rcpUrl = 'https://95d2-197-211-59-61.ngrok.io';
+  // String rcpUrl = 'http://10.0.2.2:7545';
   // ws url
-  String wsUrl = "ws://10.0.2.2:7545/";
+  // String wsUrl = "ws://10.0.2.2:7545/";
+  String wsUrl = "https://95d2-197-211-59-61.ngrok.io";
 
   /// This will construct [credentials] with the provided [privateKey]
   /// and load the Ethereum address in [myAdderess] specified by these credentials.

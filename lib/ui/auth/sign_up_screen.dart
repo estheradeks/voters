@@ -12,6 +12,7 @@ import 'package:voters/core/services/election_service.dart';
 import 'package:voters/core/services/face_reg_service.dart';
 import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/auth/sign_in_screen.dart';
+import 'package:voters/ui/auth/take_picture_screen.dart';
 import 'package:voters/ui/modules/admin/admin_bottom_nav/voters/face_reg_screen.dart';
 import 'package:voters/ui/modules/voter/voter_bottom_nav/voter_bottom_nav.dart';
 import 'package:voters/ui/widgets/buttons.dart';
@@ -68,13 +69,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
               // their image here
               InkWell(
                 onTap: () async {
-                  final XFile photo =
-                      await _picker.pickImage(source: ImageSource.camera);
+                  var res = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => TakePictureScreen(),
+                    ),
+                  );
 
-                  if (photo != null) {
-                    _image = File(photo.path);
+                  if (res != null) {
+                    setState(() {
+                      _image = res;
+                    });
                   }
-                  setState(() {});
+                  // final XFile photo =
+                  //     await _picker.pickImage(source: ImageSource.camera);
+
+                  // if (photo != null) {
+                  //   _image = File(photo.path);
+                  // }
+                  // setState(() {});
                 },
                 child: Align(
                   child: Stack(
@@ -265,7 +278,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           StorageService storageService = StorageService();
 
                           storageService.saveAddress(_ethAddress.toLowerCase());
-                          storageService.savePrivateKey(_ethPrivateKey.toLowerCase());
+                          storageService
+                              .savePrivateKey(_ethPrivateKey.toLowerCase());
                           storageService.saveRole('voter');
                           storageService.saveVoteStatus(false);
 

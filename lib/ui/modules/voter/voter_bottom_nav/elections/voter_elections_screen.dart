@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:voters/core/constants.dart';
+import 'package:voters/core/services/election_service.dart';
 import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/modules/voter/voter_bottom_nav/elections/election_details_screen.dart';
 import 'package:voters/ui/widgets/all_election_card.dart';
@@ -90,172 +91,170 @@ class _VoterElectionsScreenState extends State<VoterElectionsScreen> {
                 top: 15.0,
               ),
             ),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  VotersTextField(
-                    hintText: 'Voter Address',
-                    labelText: 'Voter Adress',
-                    controller: TextEditingController(
-                      text: voterAddress,
-                    ),
-                    readOnly: true,
+            child: Column(
+              children: [
+                VotersTextField(
+                  hintText: 'Voter Address',
+                  labelText: 'Voter Adress',
+                  controller: TextEditingController(
+                    text: voterAddress,
                   ),
+                  readOnly: true,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                VotersTextField(
+                  hintText: 'Voter Private Key',
+                  labelText: 'Voter Private Key',
+                  controller: TextEditingController(
+                    text: voterPrivateKey,
+                  ),
+                  readOnly: true,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                VotersTextField(
+                  hintText: 'ETH Balance',
+                  labelText: 'ETH Balance',
+                  controller: TextEditingController(
+                    text: '978.18 ETH',
+                  ),
+                  readOnly: true,
+                ),
+                if (_hasElectionStarted)
                   SizedBox(
-                    height: 10,
+                    height: 40,
                   ),
-                  VotersTextField(
-                    hintText: 'Voter Private Key',
-                    labelText: 'Voter Private Key',
-                    controller: TextEditingController(
-                      text: voterPrivateKey,
-                    ),
-                    readOnly: true,
-                  ),
+                if (_hasElectionStarted)
                   SizedBox(
-                    height: 10,
-                  ),
-                  VotersTextField(
-                    hintText: 'ETH Balance',
-                    labelText: 'ETH Balance',
-                    controller: TextEditingController(
-                      text: '978.18 ETH',
-                    ),
-                    readOnly: true,
-                  ),
-                  if (_hasElectionStarted)
-                    SizedBox(
-                      height: 40,
-                    ),
-                  if (_hasElectionStarted)
-                    SizedBox(
-                      height: 300,
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Ongoing Election',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          UpcomingElectionCard(
-                            onTap: _pushToElectionDetails,
-                            electionName: electionTitle,
-                          ),
-                        ],
-                      ),
-                    ),
-                  if (_hasElectionEnded)
-                    SizedBox(
-                      height: 300,
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Election Ended',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          UpcomingElectionCard(
-                            onTap: _pushToElectionDetails,
-                            electionName: electionTitle,
-                          ),
-                        ],
-                      ),
-                    ),
-                  if (!_hasElectionStarted && !_hasElectionEnded)
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          'No Election, you can see an election here when it has been created!',
+                    height: 300,
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Ongoing Election',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF62961D),
+                            color: Colors.black,
                           ),
-                          textAlign: TextAlign.center,
                         ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        UpcomingElectionCard(
+                          onTap: _pushToElectionDetails,
+                          electionName: electionTitle,
+                        ),
+                      ],
+                    ),
+                  ),
+                if (_hasElectionEnded)
+                  SizedBox(
+                    height: 300,
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Election Ended',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        UpcomingElectionCard(
+                          onTap: _pushToElectionDetails,
+                          electionName: electionTitle,
+                        ),
+                      ],
+                    ),
+                  ),
+                if (!_hasElectionStarted && !_hasElectionEnded)
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        'No Election, you can see an election here when it has been created!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF62961D),
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-
-                  SizedBox(
-                    height: 30,
                   ),
 
-                  // SizedBox(
-                  //   height: 270,
-                  //   width: double.infinity,
-                  //   child: ListView(
-                  //     scrollDirection: Axis.horizontal,
-                  //     padding: EdgeInsets.symmetric(vertical: 10.0),
-                  //     children: [
-                  //       UpcomingElectionCard(
-                  //         onTap: _pushToElectionDetails,
-                  //       ),
-                  //       SizedBox(
-                  //         width: 20,
-                  //       ),
-                  //       UpcomingElectionCard(
-                  //         onTap: _pushToElectionDetails,
-                  //       ),
-                  //       SizedBox(
-                  //         width: 20,
-                  //       ),
-                  //       UpcomingElectionCard(
-                  //         onTap: _pushToElectionDetails,
-                  //       ),
-                  //       SizedBox(
-                  //         width: 20,
-                  //       ),
-                  //       UpcomingElectionCard(
-                  //         onTap: _pushToElectionDetails,
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
-                  // Text(
-                  //   'All Elections',
-                  //   style: TextStyle(
-                  //     fontSize: 20,
-                  //     fontWeight: FontWeight.w500,
-                  //     color: Color(0xFF62961D),
-                  //   ),
-                  // ),
-                  // ListView.separated(
-                  //   shrinkWrap: true,
-                  //   primary: false,
-                  //   padding: EdgeInsets.symmetric(vertical: 10.0),
-                  //   itemBuilder: (_, __) {
-                  //     return AllElectionCard(
-                  //       onTap: _pushToElectionDetails,
-                  //     );
-                  //   },
-                  //   separatorBuilder: (_, __) {
-                  //     return SizedBox(
-                  //       height: 15,
-                  //     );
-                  //   },
-                  //   itemCount: 12,
-                  // ),
-                ],
-              ),
+                SizedBox(
+                  height: 30,
+                ),
+
+                // SizedBox(
+                //   height: 270,
+                //   width: double.infinity,
+                //   child: ListView(
+                //     scrollDirection: Axis.horizontal,
+                //     padding: EdgeInsets.symmetric(vertical: 10.0),
+                //     children: [
+                //       UpcomingElectionCard(
+                //         onTap: _pushToElectionDetails,
+                //       ),
+                //       SizedBox(
+                //         width: 20,
+                //       ),
+                //       UpcomingElectionCard(
+                //         onTap: _pushToElectionDetails,
+                //       ),
+                //       SizedBox(
+                //         width: 20,
+                //       ),
+                //       UpcomingElectionCard(
+                //         onTap: _pushToElectionDetails,
+                //       ),
+                //       SizedBox(
+                //         width: 20,
+                //       ),
+                //       UpcomingElectionCard(
+                //         onTap: _pushToElectionDetails,
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // SizedBox(
+                //   height: 20,
+                // ),
+                // Text(
+                //   'All Elections',
+                //   style: TextStyle(
+                //     fontSize: 20,
+                //     fontWeight: FontWeight.w500,
+                //     color: Color(0xFF62961D),
+                //   ),
+                // ),
+                // ListView.separated(
+                //   shrinkWrap: true,
+                //   primary: false,
+                //   padding: EdgeInsets.symmetric(vertical: 10.0),
+                //   itemBuilder: (_, __) {
+                //     return AllElectionCard(
+                //       onTap: _pushToElectionDetails,
+                //     );
+                //   },
+                //   separatorBuilder: (_, __) {
+                //     return SizedBox(
+                //       height: 15,
+                //     );
+                //   },
+                //   itemCount: 12,
+                // ),
+              ],
             ),
           );
   }

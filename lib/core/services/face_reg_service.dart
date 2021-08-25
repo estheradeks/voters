@@ -31,6 +31,7 @@ class FaceRegService {
   static Future<bool> verifyFace(
       File currentImage, String ethPrivateKey) async {
     // upload to fireabse
+    bool verificationPassed;
     try {
       String imageUrl = await uploadProfilePicture(currentImage);
 
@@ -77,16 +78,16 @@ class FaceRegService {
 
           log('json here for api is $data');
 
-          String resultMessage = data['resultMessage'];
+          String resultMessage = data["data"]['resultMessage'];
           int similarPercent = data['similarPercent'];
 
+
           if (resultMessage.contains('different')) {
-            return false;
-          } else if (resultMessage.contains('same') &&
-              !similarPercent.isNegative) {
-            return true;
+            verificationPassed = false;
+          } else if (resultMessage.contains('same')) {
+            verificationPassed = true;
           } else if (resultMessage.contains('NotFound')) {
-            return false;
+            verificationPassed = false;
           }
         } else {
           return false;
@@ -99,8 +100,9 @@ class FaceRegService {
 
       }
     } catch (e) {
-      return false;
+      verificationPassed = false;
     }
+    return verificationPassed;
   }
 
   // take picture during sign up and put link in firebase
