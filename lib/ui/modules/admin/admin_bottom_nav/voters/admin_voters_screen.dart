@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:voters/core/constants.dart';
 import 'package:voters/core/models/voter.dart';
+import 'package:voters/core/services/election_service.dart';
 import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/widgets/buttons.dart';
 import 'package:voters/ui/widgets/dialogs.dart';
@@ -25,13 +26,18 @@ class _AdminVotersScreenState extends State<AdminVotersScreen> {
   List<Voter> _votersLists = [];
   String _address;
   String role;
+  ElectionService electionService;
 
   void _getData() async {
     setState(() {
       _isLoading = true;
     });
     _address = await StorageService().getAddress();
+    String privateKey = await StorageService().getPrivateKey();
     role = await StorageService().getRole();
+
+    electionService = ElectionService(privateKey);
+    await electionService.initialSetup();
 
     // get election start value
     var resultListStart = await electionService.readContract(

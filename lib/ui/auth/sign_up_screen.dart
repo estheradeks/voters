@@ -282,10 +282,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               .savePrivateKey(_ethPrivateKey.toLowerCase());
                           storageService.saveRole('voter');
                           storageService.saveVoteStatus(false);
+                          
 
-                          electionService = ElectionService(_ethPrivateKey);
+                          ElectionService electionService = ElectionService(_ethPrivateKey);
+                          await electionService.initialSetup();
 
-                          await Future.delayed(Duration(seconds: 6));
+                          // await Future.delayed(Duration(seconds: 6));
 
                           var result = await electionService.writeContract(
                             electionService.registerAsVoter,

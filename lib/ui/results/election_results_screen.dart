@@ -1,6 +1,9 @@
+
 import 'package:flutter/material.dart';
 import 'package:voters/core/constants.dart';
 import 'package:voters/core/models/candidate.dart';
+import 'package:voters/core/services/election_service.dart';
+import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/widgets/election_candidates_card.dart';
 import 'package:voters/utils/theme.dart';
 
@@ -19,12 +22,16 @@ class _ElectionResultsScreenState extends State<ElectionResultsScreen> {
   bool _isLoading = false;
   int _noOfCandidates = 0;
   List<Candidate> _candidatesList = [];
+  ElectionService electionService;
 
   void _getData() async {
     setState(() {
       _isLoading = true;
     });
     // get election start value
+    String kPrivateKey = await StorageService().getPrivateKey();
+    electionService = ElectionService(kPrivateKey);
+    await electionService.initialSetup();
     var resultListStart = await electionService.readContract(
       electionService.getStart,
       [],
@@ -63,7 +70,7 @@ class _ElectionResultsScreenState extends State<ElectionResultsScreen> {
 
     _candidatesList = _candidatesList
       ..sort((a, b) => b.voteCount.compareTo(a.voteCount));
-      
+
     setState(() {
       _isLoading = false;
     });

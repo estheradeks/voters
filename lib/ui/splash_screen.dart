@@ -40,9 +40,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
         log('splash screen private key is $privateKey');
         if (isLoggedIn) {
-          electionService = ElectionService(privateKey);
+          ElectionService electionService = ElectionService(privateKey);
+          await electionService.initialSetup();
 
-          await Future.delayed(Duration(seconds: 3));
+          // await Future.delayed(Duration(seconds: 3));
         }
         Navigator.pushReplacement(
           context,

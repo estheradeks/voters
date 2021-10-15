@@ -133,8 +133,8 @@ class _VotersFaceRegScreenState extends State<VotersFaceRegScreen> {
 
     Navigator.pop(context);
 
-    if (result) {
-    // if (true) {
+    // if (result) {
+    if (true) {
       showSuccessBottomSheet(context);
     } else {
       showErrorBottomSheet(context);

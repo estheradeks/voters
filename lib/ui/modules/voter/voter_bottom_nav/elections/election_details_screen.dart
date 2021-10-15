@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:voters/core/constants.dart';
 import 'package:voters/core/models/candidate.dart';
+import 'package:voters/core/services/election_service.dart';
+import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/modules/voter/voter_bottom_nav/elections/candidates_screen.dart';
 import 'package:voters/ui/widgets/candidate_details_bottom_sheet.dart';
 import 'package:voters/ui/widgets/election_position_card.dart';
@@ -24,11 +26,19 @@ class _VoterElectionDetailsScreenState
   bool _isLoading = false;
   int _noOfCandidates = 0;
   List<Candidate> _candidatesList = [];
+  ElectionService electionService;
 
   Future<void> _getElectionCandidates() async {
     setState(() {
       _isLoading = true;
     });
+
+    String voterKey = await StorageService().getPrivateKey();
+
+    electionService = ElectionService(voterKey);
+
+    await electionService.initialSetup();
+    
     var resultList = await electionService.readContract(
       electionService.getTotalCandidate,
       [],

@@ -22,6 +22,7 @@ class _VoterElectionsScreenState extends State<VoterElectionsScreen> {
       'https://firebasestorage.googleapis.com/v0/b/voters-87247.appspot.com/o/voting.jpeg?alt=media&token=a80e0bd1-053a-4a9c-8cb7-702604f8ad4c';
   String voterAddress = '';
   String voterPrivateKey = '';
+  ElectionService electionService;
 
   @override
   void initState() {
@@ -35,6 +36,8 @@ class _VoterElectionsScreenState extends State<VoterElectionsScreen> {
     });
     // get private and public key from firebase
     await _getKeyAndAddress();
+    electionService = ElectionService(voterPrivateKey);
+    await electionService.initialSetup();
 
     // get election status
     var resultListStart = await electionService.readContract(

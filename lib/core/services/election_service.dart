@@ -9,7 +9,7 @@ import 'package:web_socket_channel/io.dart';
 class ElectionService {
   ElectionService(String kPrivateKey) {
     this.privateKey = kPrivateKey;
-    initialSetup();
+    // initialSetup();
   }
 
   // http client
@@ -18,11 +18,11 @@ class ElectionService {
   Web3Client web3client;
 
   // rcp url
-  String rcpUrl = 'https://95d2-197-211-59-61.ngrok.io';
+  String rcpUrl = 'https://6fcf-197-210-47-21.ngrok.io';
   // String rcpUrl = 'http://10.0.2.2:7545';
   // ws url
   // String wsUrl = "ws://10.0.2.2:7545/";
-  String wsUrl = "https://95d2-197-211-59-61.ngrok.io";
+  String wsUrl = "https://6fcf-197-210-47-21.ngrok.io";
 
   /// This will construct [credentials] with the provided [privateKey]
   /// and load the Ethereum address in [myAdderess] specified by these credentials.

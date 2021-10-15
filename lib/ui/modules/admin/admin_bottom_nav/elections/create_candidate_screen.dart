@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:voters/core/constants.dart';
 import 'package:voters/core/models/candidate.dart';
+import 'package:voters/core/services/election_service.dart';
+import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/widgets/buttons.dart';
 import 'package:voters/ui/widgets/dialogs.dart';
 import 'package:voters/ui/widgets/text_fields.dart';
@@ -189,6 +191,9 @@ class _CreateCandidateScreenState extends State<CreateCandidateScreen> {
             text: 'Create Candidate'.toUpperCase(),
             onPressed: () async {
               showLoadingDialog(context);
+              String _privakeKey = await StorageService().getPrivateKey();
+              ElectionService electionService = ElectionService(_privakeKey);
+              await electionService.initialSetup();
 
               var result = await electionService.writeContract(
                 electionService.addCandidate,

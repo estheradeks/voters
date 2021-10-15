@@ -101,7 +101,8 @@ class _SignInScreenState extends State<SignInScreen> {
         String address = document.data()['address'];
         String privateKey = document.data()['private_key'];
 
-        electionService = ElectionService(privateKey);
+        ElectionService electionService = ElectionService(privateKey);
+        await  electionService.initialSetup();
 
         // save to storage
         storageService.saveAddress(address);

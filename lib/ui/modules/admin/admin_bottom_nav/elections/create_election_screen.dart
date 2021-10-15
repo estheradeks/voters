@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:voters/core/constants.dart';
 import 'package:voters/core/models/voter_admin.dart';
 import 'package:voters/core/services/election_service.dart';
+import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/widgets/buttons.dart';
 import 'package:voters/ui/widgets/dialogs.dart';
 import 'package:voters/ui/widgets/text_fields.dart';
@@ -155,6 +156,11 @@ class _CreateElectionScreenState extends State<CreateElectionScreen> {
               final voterAdmin = VoterAdmin.fromJson(
                 document.data(),
               );
+
+              String pirvateKey = await StorageService().getPrivateKey();
+
+              ElectionService electionService = ElectionService(pirvateKey);
+              await electionService.initialSetup();
               var result = await electionService.writeContract(
                 electionService.setElectionDetails,
                 [

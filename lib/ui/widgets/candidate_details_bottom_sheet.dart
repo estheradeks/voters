@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:voters/core/constants.dart';
 import 'package:voters/core/models/candidate.dart';
 import 'package:voters/core/models/voter.dart';
+import 'package:voters/core/services/election_service.dart';
 import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/modules/admin/admin_bottom_nav/voters/face_reg_screen.dart';
 import 'package:voters/ui/widgets/buttons.dart';
@@ -36,6 +37,7 @@ class _CandidateDetailsBottomSheetState
   List<Voter> _votersLists = [];
   int _noOfVoters = 0;
   String _ethAddress;
+  ElectionService electionService;
 
   @override
   void initState() {
@@ -48,6 +50,9 @@ class _CandidateDetailsBottomSheetState
     setState(() {
       _isLoading = true;
     });
+    String kPrivateKey = await storageService.getPrivateKey();
+    electionService = ElectionService(kPrivateKey);
+    await electionService.initialSetup();
 
     var resultList = await electionService.readContract(
       electionService.getTotalVoter,

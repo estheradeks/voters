@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:voters/core/constants.dart';
+import 'package:voters/core/services/election_service.dart';
+import 'package:voters/core/services/storage_service.dart';
 import 'package:voters/ui/modules/admin/admin_bottom_nav/elections/admin_elections_screen.dart';
 import 'package:voters/ui/modules/admin/admin_bottom_nav/elections/create_election_screen.dart';
 import 'package:voters/ui/modules/admin/admin_bottom_nav/profile/admin_profile_screen.dart';
@@ -48,6 +50,12 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
                 ? FloatingActionButton.extended(
                     onPressed: () async {
                       showLoadingDialog(context);
+                      String privateKey =
+                          await StorageService().getPrivateKey();
+
+                      ElectionService electionService =
+                          ElectionService(privateKey);
+                      await electionService.initialSetup();
                       var resultList = await electionService.readContract(
                         electionService.getStart,
                         [],

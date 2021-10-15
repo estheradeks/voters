@@ -23,6 +23,8 @@ class _AdminElectionsScreenState extends State<AdminElectionsScreen> {
   bool _hasElectionStarted;
   bool _hasElectionEnded;
   String electionTitle = '';
+  ElectionService electionService;
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +51,9 @@ class _AdminElectionsScreenState extends State<AdminElectionsScreen> {
     });
     // get private and public key from firebase
     await _getAdminKeyAndAddress();
+
+    electionService = ElectionService(_voterAdmin.privateKey);
+    await electionService.initialSetup();
 
     // get election status
     var resultListStart = await electionService.readContract(
